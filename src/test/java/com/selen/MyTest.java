@@ -1,5 +1,6 @@
 package com.selen;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -97,7 +98,9 @@ public class MyTest {
         wait.until(visibilityOf(submitButton));
         submitButton.click();
 
-        assertThat(driver.switchTo().alert().getText(), is("Please enter email address"));
+        final Alert alert = driver.switchTo().alert();
+        assertThat(alert.getText(), is("Please enter email address"));
+        alert.accept();
     }
 
     //8
@@ -113,7 +116,9 @@ public class MyTest {
         wait.until(visibilityOf(submitButton));
         submitButton.click();
 
-        assertThat(driver.switchTo().alert().getText(), is("Invalid email address."));
+        final Alert alert = driver.switchTo().alert();
+        assertThat(alert.getText(), is("Invalid email address."));
+        alert.accept();
     }
 
     //9
@@ -130,7 +135,7 @@ public class MyTest {
         wait.until(visibilityOf(submitButton));
         submitButton.click();
 
-        final WebElement searchResultsContainer = driver.findElement(id("search-results"));
+        final WebElement searchResultsContainer = driver.findElement(xpath("//*[@id='search-results']"));
         wait.until(visibilityOf(searchResultsContainer));
 
         assertTrue(searchResultsContainer.findElements(className("product-listing")).size() > 0);
@@ -150,19 +155,17 @@ public class MyTest {
 
         wait.until(titleContains(firstBook.getText()));
 
-        driver.findElement(id("links-site")).findElement(linkText("Home")).click();
+        final WebElement homeLink = driver.findElement(xpath("//a[contains(text(),'Home')]"));
+        wait.until(elementToBeClickable(homeLink));
+        homeLink.click();
 
-        final WebElement homepageLinksContainer = driver.findElement(id("homepage-links"));
-        wait.until(visibilityOf(homepageLinksContainer));
-        final WebElement institutions = homepageLinksContainer.findElement(xpath("//a[contains(text(),'Institutions')]"));
+        waitFor(5000);
+
+        final WebElement institutions = driver.findElement(xpath("//a[contains(text(),'Institutions')]"));
         wait.until(elementToBeClickable(institutions));
         institutions.click();
 
-        try {
-            Thread.sleep(5000);
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitFor(5000);
 
         assertTrue(switchToWindowWithURL("https://edservices.wiley.com/", driver));
     }
@@ -179,5 +182,13 @@ public class MyTest {
 
         driver.switchTo().window(currentWindowHandle);
         return false;
+    }
+
+    private void waitFor(final Integer timeInMillis) {
+        try {
+            Thread.sleep(timeInMillis);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
