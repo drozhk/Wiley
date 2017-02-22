@@ -10,7 +10,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <webdriver.gecko.driver>d:\Java\drivers\geckodriver.exe</webdriver.gecko.driver>
+        <webdriver.gecko.driver>d:\Workspace\geckodriver.exe</webdriver.gecko.driver>
     </properties>
 
     <build>
